@@ -28,8 +28,16 @@ export const getQuestion = async (req, res) => {
 
     // if user have seen all question return a messgae.
     if (!question) {
-      return res.json({ message: "User alreadt answered all questions!" });
+      return res.json({ message: "User already answered all questions!" });
     }
+
+
+    // Send the question id and its options and clues as a response
+    res.json({
+      id: question.id,
+      options: question.options,
+      clues: question.clues,
+    });
 
     // Mark the fetched question as seen by the user
     await prisma.seenQuestion.create({
@@ -39,12 +47,6 @@ export const getQuestion = async (req, res) => {
       },
     });
 
-    // Send the question id and its options and clues as a response
-    res.json({
-      id: question.id,
-      options: question.options,
-      clues: question.clues,
-    });
   } catch (error) {
     console.error("Error getting question:", error);
     return res.status(500).json({

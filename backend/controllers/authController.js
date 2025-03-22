@@ -115,7 +115,7 @@ export const login = async (req, res) => {
     // Send successful login response with token and session value
     res
       .status(200)
-      .json({ id: fetchUser.id, session: sessionUniqueValue, token: token });
+      .json({ username: fetchUser.username, id: fetchUser.id, session: sessionUniqueValue, token: token });
   } catch (error) {
     console.error("Error during login:", error);
     return res.status(500).json({ message: "Internal server error" });
