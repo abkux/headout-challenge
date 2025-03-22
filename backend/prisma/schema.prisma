@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  username      String         @unique
+  password      String
+  score         Int            @default(0)
+  invitedBy     String?
+  invites       Invite[]
+  seenQuestions SeenQuestion[]
+}
+
+model Session {
+  id        String   @id @default(uuid()) 
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Destination {
+  id            String          @id @default(uuid())
+  city          String
+  country       String
+  clues         Json
+  options       Json
+  funFact       Json
+  trivia        Json
+  seenQuestions SeenQuestion[] 
+}
+
+model SeenQuestion {
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  questionId  String
+  createdAt   DateTime    @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  destination Destination @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model Invite {
+  id        Int     @id @default(autoincrement())
+  inviterId Int
+  invitee   String
+  score     Int
+  inviter   User    @relation(fields: [inviterId], references: [id])
+}
