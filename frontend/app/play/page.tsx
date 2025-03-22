@@ -13,7 +13,14 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { AlertCircle, HelpCircle, MapPin, ThumbsUp, Frown, Coins } from "lucide-react";
+import {
+  AlertCircle,
+  HelpCircle,
+  MapPin,
+  ThumbsUp,
+  Frown,
+  Coins,
+} from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Confetti from "react-confetti";
 import api from "@/lib/axios-helper";
@@ -24,7 +31,15 @@ import { logout } from "@/lib/axios";
 export default function PlayPage() {
   const router = useRouter();
 
-  const [currentQuestion, setCurrentQuestion] = useState(null);
+  type Question = {
+    id: string;
+    questionText: string;
+    options: string[];
+    clues: string[];
+  };
+
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+
   const [gameState, setGameState] = useState("loading");
   const [score, setScore] = useState(0);
   const [hintsRevealed, setHintsRevealed] = useState(1);
@@ -36,7 +51,6 @@ export default function PlayPage() {
   const [username, setUsername] = useState("");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
-
 
   // Fetch question on initial load
   useEffect(() => {
@@ -56,9 +70,9 @@ export default function PlayPage() {
       const response = await api.get(`/game/question`);
       const data = response.data;
 
-      console.log(data)
+      console.log(data);
 
-      if(data.message === 'User already answered all questions!') {
+      if (data.message === "User already answered all questions!") {
         setIsLoading(false);
         setAllQuestionsAnswered(true);
       }
@@ -73,11 +87,11 @@ export default function PlayPage() {
     }
   };
 
-  const checkAnswer = async (selectedOption) => {
+  const checkAnswer = async (selectedOption: string) => {
     if (!currentQuestion) return;
 
     try {
-      const response = await api.post('/game/answer', {
+      const response = await api.post("/game/answer", {
         questionId: currentQuestion.id,
         answer: selectedOption,
       });
@@ -96,8 +110,8 @@ export default function PlayPage() {
       setQuestionsAnswered(questionsAnswered + 1);
 
       if (questionsAnswered == totalQuestions - 1) {
-                setGameFinished(true); // Mark game as finished
-              }
+        setGameFinished(true); // Mark game as finished
+      }
     } catch (error) {
       console.error("Error checking answer:", error);
     }
@@ -109,11 +123,9 @@ export default function PlayPage() {
     }
   };
 
-
   const nextQuestion = () => {
     fetchQuestion();
   };
-
 
   if (allQuestionsAnswered) {
     return (
@@ -134,7 +146,13 @@ export default function PlayPage() {
             <Button onClick={() => router.push("/")} variant="outline">
               Return to Home
             </Button>
-            <Button onClick={() => {router.push("/"); logout()}} variant="outline">
+            <Button
+              onClick={() => {
+                router.push("/");
+                logout();
+              }}
+              variant="outline"
+            >
               Log Out
             </Button>
           </CardFooter>
@@ -144,60 +162,56 @@ export default function PlayPage() {
   }
 
   const playAgain = () => {
-        setScore(0);
-        setHintsRevealed(1);
-        setIncorrectAttempts(0);
-        setQuestionsAnswered(0);
-        setGameFinished(false);
-    
-        fetchQuestion(); // Fetch the first question again
-      };
+    setScore(0);
+    setHintsRevealed(1);
+    setIncorrectAttempts(0);
+    setQuestionsAnswered(0);
+    setGameFinished(false);
 
+    fetchQuestion(); // Fetch the first question again
+  };
 
-      if (isLoading || (!currentQuestion && !gameFinished)) {
-            return (
-              <div className="container mx-auto px-4 py-8 max-w-4xl flex justify-center items-center min-h-[50vh]">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-              </div>
-            );
-          }
-        
-          if (gameFinished) {
-            return (
-              <div className="container mx-auto px-4 py-8 max-w-4xl flex flex-col items-center">
-                <Confetti />
-                <Card className="shadow-lg p-6 text-center">
-                  <CardHeader>
-                    <CardTitle className="text-2xl font-bold">Game Over!</CardTitle>
-                    <CardDescription className="text-gray-600">
-                      You have completed all {totalQuestions} questions.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-lg font-semibold">Your Score: {score}</p>
-                    <p className="text-gray-500">
-                      Incorrect Attempts: {incorrectAttempts}
-                    </p>
-                  </CardContent>
-                  <CardFooter className="flex flex-col gap-4">
-                    <Button
-                      onClick={playAgain}
-                      className="w-full text-base py-2"
-                    >
-                      Play Again
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => router.push("/")}
-                      className="w-full text-base py-2"
-                    >
-                      Go to Home
-                    </Button>
-                  </CardFooter>
-                </Card>
-              </div>
-            );
-          }
+  if (isLoading || (!currentQuestion && !gameFinished)) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl flex justify-center items-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (gameFinished) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-4xl flex flex-col items-center">
+        <Confetti />
+        <Card className="shadow-lg p-6 text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">Game Over!</CardTitle>
+            <CardDescription className="text-gray-600">
+              You have completed all {totalQuestions} questions.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg font-semibold">Your Score: {score}</p>
+            <p className="text-gray-500">
+              Incorrect Attempts: {incorrectAttempts}
+            </p>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-4">
+            <Button onClick={playAgain} className="w-full text-base py-2">
+              Play Again
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push("/")}
+              className="w-full text-base py-2"
+            >
+              Go to Home
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-3 py-3 sm:px-4 sm:py-8 max-w-4xl relative">
@@ -234,21 +248,19 @@ export default function PlayPage() {
         </CardHeader>
         <CardContent className="space-y-2 sm:space-y-4 p-3 sm:p-6 pt-0 sm:pt-0">
           <div className="space-y-1.5 sm:space-y-2">
-           
-
-
-            {currentQuestion.clues
-              .slice(0, hintsRevealed)
-              .map((clue, index) => (
-                <div
-                  key={index}
-                  className="p-2 sm:p-3 bg-blue-50 dark:bg-blue-950 rounded-md"
-                >
-                  <p className="text-blue-800 dark:text-blue-300 text-xs sm:text-base">
-                    {clue}
-                  </p>
-                </div>
-              ))}
+            {currentQuestion &&
+              currentQuestion.clues
+                .slice(0, hintsRevealed)
+                .map((clue, index) => (
+                  <div
+                    key={index}
+                    className="p-2 sm:p-3 bg-blue-50 dark:bg-blue-950 rounded-md"
+                  >
+                    <p className="text-blue-800 dark:text-blue-300 text-xs sm:text-base">
+                      {clue}
+                    </p>
+                  </div>
+                ))}
           </div>
 
           {/* ❌ Incorrect guess animation */}
@@ -287,9 +299,9 @@ export default function PlayPage() {
           {gameState === "guessing" ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 w-full">
-                {currentQuestion.options.map((option, index) => (
+                {currentQuestion && currentQuestion.options.map((option, index) => (
                   <Button
-                    key={index}
+                     key={index}
                     onClick={() => checkAnswer(option)}
                     className="w-full text-xs sm:text-base py-1.5 sm:py-2 h-auto min-h-[2rem] sm:min-h-[2.5rem]"
                   >
@@ -297,7 +309,7 @@ export default function PlayPage() {
                   </Button>
                 ))}
               </div>
-              {currentQuestion.clues.length > hintsRevealed && (
+              { currentQuestion && currentQuestion.clues.length > hintsRevealed && (
                 <Button
                   variant="outline"
                   onClick={revealHint}

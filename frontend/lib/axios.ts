@@ -2,7 +2,7 @@ import api from "./axios-helper";
 import Cookies from "js-cookie";
 
 // Register function
-export async function register(username, password) {
+export async function register(username:string, password: string) {
   try {
     const response = await api.post("/auth/register", {
       username,
@@ -16,14 +16,14 @@ export async function register(username, password) {
       console.error("Unexpected response:", response.data);
       return false;
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Registration failed:", error.response?.data || error.message);
     return false; // Indicate failure
   }
 }
 
 // Login function
-export async function login(username, password) {
+export async function login(username: string, password: string) {
   try {
     const response = await api.post("/auth/login", {
       username,
@@ -43,7 +43,7 @@ export async function login(username, password) {
       console.error("Unexpected response:", response.data);
       return false;
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Login failed:", error.response?.data || error.message);
     return false; // Indicate failure
   }
