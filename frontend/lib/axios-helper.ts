@@ -51,7 +51,7 @@ api.interceptors.response.use(
       error.response?.status === 500 // case: server error
     ) {
       console.error("Error occurred, redirecting to login.");
-      logoutAndRedirect();
+      // logoutAndRedirect();
     }
 
     return Promise.reject(error);
@@ -62,6 +62,7 @@ api.interceptors.response.use(
 const logoutAndRedirect = () => {
   Cookies.remove("Authorization");
   Cookies.remove("Session");
+  Cookies.remove("Username");
   window.location.href = "/login"; // Redirect to login
 };
 
