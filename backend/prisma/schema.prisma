@@ -16,7 +16,6 @@ model User {
   password      String
   score         Int            @default(0)
   invitedBy     String?
-  invites       Invite[]
   seenQuestions SeenQuestion[]
   userScore     UserScore?
 }
@@ -56,8 +55,6 @@ model Invite {
   score       Int
   inviteLink  String   @unique
   createdAt   DateTime @default(now())
-
-  inviter     User     @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 }
 
 model UserScore {

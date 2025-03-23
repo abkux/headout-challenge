@@ -34,9 +34,9 @@ export async function login(username: string, password: string) {
       console.log("Login successful:", response.data);
 
       // Set tokens/cookies
-      Cookies.set("Authorization", response.data.token, { expires: 7 }); 
-      Cookies.set("Session", response.data.session, { expires: 7 });
-      Cookies.set("Username", response.data.username, { expires: 7 })
+      Cookies.set("Authorization", response.data.token, { expires: 1 / 24 }); 
+      Cookies.set("Session", response.data.session, { expires: 1/24 });
+      Cookies.set("Username", response.data.username, { expires: 1/24 })
 
       return true; // Indicate success
     } else {

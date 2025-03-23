@@ -10,9 +10,11 @@
 ├── /routes                   # Route handlers
 │   ├── authRoutes.js         # User authentication routes
 │   ├── gameRoutes.js         # Game-related routes
+│   └── miscRoutes.js         # Misc Routes ( only 1 )
 ├── /controllers              # Controller functions
 │   ├── authController.js     # Handles login and registration
 │   ├── gameController.js     # Handles game logic
+│   └── miscController.js     # Handles misc logic only 1 (username check)
 ├── /middleware
 │   └── authMiddleware.js     # Middleware to authenticate and validate session
 ├── /prisma
@@ -40,6 +42,10 @@
 | **nanoid**     | Unique session generation          |
 | **dotenv**     | Environment variable management    |
 | **CORS**       | Cross-origin resource sharing      |
+
+---
+## 🪣 Database ER Diagram
+![Prisma_ER_Diagram](./media/prisma-erd.svg)
 
 ---
 

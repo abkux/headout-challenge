@@ -315,12 +315,6 @@ export const createInvite = async (req, res) => {
     res.status(201).json({ invite, message: "Invite created successfully" });
   } catch (error) {
     console.error("Error while creating invite:", error);
-
-    if (error.code === "P2002") {
-      res.status(400).json({ error: "Invite link already exists" });
-    } else {
-      res.status(500).json({ error: "Failed to create invite", details: error.message });
-    }
   }
 };
 

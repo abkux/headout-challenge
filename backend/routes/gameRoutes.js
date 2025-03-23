@@ -63,7 +63,7 @@ router.get('/up/question', getQuestion2);
  *       401:
  *         description: Unauthorized, token required
  */
-router.post('/answer', authMiddleware, checkAnswer);
+router.post('/answer', checkAnswer);
 
 /**
  * @swagger

@@ -27,11 +27,16 @@ const ChallengeModal = ({ open, setOpen }: ChallengeModalProps) => {
   const [imageUrl, setImageUrl] = useState("");
   const inviteCardRef = useRef<HTMLDivElement | null>(null);
 
-  const [currentUser, setCurrentUser] = useState({
+  const [currentUser, setCurrentUser] = useState<{
+    username: string;
+    id: string | null;
+    score: number | null;
+  }>({
     username: "",
     id: null,
     score: null,
   });
+  
 
   useEffect(() => {
     const fetchCurrentUser = async () => {
@@ -110,11 +115,7 @@ const ChallengeModal = ({ open, setOpen }: ChallengeModalProps) => {
         inviteLink: inviteCode,
       });
 
-      if (saveInviteResponse.status === 200) {
-        console.log("Invite saved successfully!");
-      } else {
-        console.error("Failed to save invite.");
-      }
+      console.log(saveInviteResponse.data)
     } catch (error) {
       console.error("Error saving invite:", error);
     }
@@ -123,9 +124,18 @@ const ChallengeModal = ({ open, setOpen }: ChallengeModalProps) => {
   const shareOnWhatsApp = async () => {
     await saveInvite();
     const inviteText = `Hey! ${currentUser.username} has challenged you to a game! Join now: `;
-    const inviteLink = `https://headout-challenge.vercel.app/join-challenge/${currentUser.id}/link?code=${encodeURIComponent(
+    // const inviteLink = `https://headout-challenge.vercel.app/join-challenge/${currentUser.id}/link?code=${encodeURIComponent(
+    //   inviteCode
+    // )}&username=${encodeURIComponent(username)}&score=${encodeURIComponent(currentUser.score)}`;
+
+    // fixed  nullable issue
+    const inviteLink = currentUser.id && currentUser.score !== null
+  ? `https://headout-challenge.vercel.app/join-challenge/${currentUser.id}/link?code=${encodeURIComponent(
       inviteCode
-    )}&username=${encodeURIComponent(username)}`;
+    )}&username=${encodeURIComponent(username)}&score=${encodeURIComponent(currentUser.score)}`
+  : "";
+
+    
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
       inviteText + inviteLink
     )}`;
