@@ -2,9 +2,9 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 // added deplyed url
-const baseURL = "https://headout-challenge.onrender.com/api";
+// const baseURL = "https://headout-challenge.onrender.com/api";
 
-// const baseURL = "http://localhost:5000/api";
+const baseURL = "http://localhost:5000/api";
 
 const api = axios.create({
   baseURL,
