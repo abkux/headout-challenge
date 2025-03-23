@@ -1,8 +1,10 @@
 import express from 'express';
 import authRoutes from './routes/authRoutes.js';
 import gameRoutes from './routes/gameRoutes.js';
+import miscRoutes from './routes/miscRoutes.js';
 import dotenv from 'dotenv';
 import cors from 'cors'
+import swaggerDocs from './swagger.js';
 
 // Load .env configuration to process.env
 dotenv.config();
@@ -19,8 +21,10 @@ app.use(cors()) // Enable CORS for cross-origin requests
 app.use('/api/auth', authRoutes); // Routes for authentication (e.g., login, register)
 app.use('/api/game', gameRoutes); // Routes for game-related operations
 
+app.use('/api/misc', miscRoutes);
 // Start the server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Exporting 'app' for testing purpose.
 export default app; 
+swaggerDocs(app);

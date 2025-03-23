@@ -3,19 +3,50 @@ import jwt from "jsonwebtoken";
 import prisma from "../prisma/client.js";
 import { nanoid } from "nanoid";
 
-// User registration handler
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     description: Create a new user with a hashed password and save it in the database.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: user123
+ *               password:
+ *                 type: string
+ *                 example: securePassword123
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *       400:
+ *         description: Missing values such as username or password
+ *       409:
+ *         description: User already exists, please log in
+ *       500:
+ *         description: Internal Server Error
+ */
 export const register = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-     // Check if username and password are provided
+    // Check if username and password are provided
     if (!username || !password) {
       return res
         .status(400)
-        .json({ message: "Missing values such as email, name, password." });
+        .json({ message: "Missing values such as username, password." });
     }
 
-     // Check if user already exists
+    // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: {
         username,
@@ -24,14 +55,14 @@ export const register = async (req, res) => {
     if (existingUser) {
       return res
         .status(409)
-        .json({ message: "User already exist please, log in." });
+        .json({ message: "User already exists, please log in." });
     }
 
     // Generate a salt and hash the password
     const passwordSalt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, passwordSalt);
 
-     // Create a new user in the database
+    // Create a new user in the database
     const result = await prisma.user.create({
       data: {
         username: username,
@@ -39,7 +70,7 @@ export const register = async (req, res) => {
       },
     });
 
-     // Return success response after user is created
+    // Return success response after user is created
     res
       .status(201)
       .json({
@@ -52,7 +83,40 @@ export const register = async (req, res) => {
   }
 };
 
-// User login handler
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: User login
+ *     description: Authenticate user by verifying password and issue JWT and session token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: user123
+ *               password:
+ *                 type: string
+ *                 example: securePassword123
+ *     responses:
+ *       200:
+ *         description: Login successful, returns JWT and session
+ *       400:
+ *         description: Missing values such as username or password
+ *       404:
+ *         description: No user found with that username
+ *       401:
+ *         description: Incorrect password
+ *       500:
+ *         description: Internal Server Error
+ */
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -64,7 +128,7 @@ export const login = async (req, res) => {
         .json({ message: "Missing values such as username, password." });
     }
 
-     // Find the user in the database
+    // Find the user in the database
     const fetchUser = await prisma.user.findUnique({
       where: {
         username,
@@ -81,12 +145,12 @@ export const login = async (req, res) => {
     // Compare provided password with stored hashed password
     const passwordMatch = await bcrypt.compare(password, fetchUser.password);
 
-     // Return error if passwords don't match
+    // Return error if passwords don't match
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Incorrect Passowrd." });
-    }  
+      return res.status(401).json({ message: "Incorrect Password." });
+    }
 
-    // Generate a JWT token with user ID as payload ( 1 hour expirxy )
+    // Generate a JWT token with user ID as payload (1 hour expiry)
     const token = jwt.sign({ id: fetchUser.id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -115,9 +179,51 @@ export const login = async (req, res) => {
     // Send successful login response with token and session value
     res
       .status(200)
-      .json({ username: fetchUser.username, id: fetchUser.id, session: sessionUniqueValue, token: token });
+      .json({
+        username: fetchUser.username,
+        id: fetchUser.id,
+        session: sessionUniqueValue,
+        token: token,
+      });
   } catch (error) {
     console.error("Error during login:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+/**
+ * @swagger
+ * /api/auth/account:
+ *   get:
+ *     summary: Get account details
+ *     description: Retrieve the account details of the logged-in user.
+ *     security:
+ *       - bearerAuth: []
+ *       - SessionAuth: []
+ *     responses:
+ *       200:
+ *         description: Returns user account details
+ *       401:
+ *         description: Unauthorized, invalid token or session
+ *       500:
+ *         description: Internal Server Error
+ */
+export const getAccountDetails = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const result = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    res.status(200).json({
+      id: result.id,
+      username: result.username,
+      score: result.score,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

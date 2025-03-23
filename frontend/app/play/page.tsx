@@ -19,7 +19,7 @@ import {
   MapPin,
   ThumbsUp,
   Frown,
-  Coins,
+  Share2,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import Confetti from "react-confetti";
@@ -27,6 +27,7 @@ import api from "@/lib/axios-helper";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { logout } from "@/lib/axios";
+import ChallengeModal from "@/components/pages/ChallengeModal";
 
 export default function PlayPage() {
   const router = useRouter();
@@ -51,6 +52,8 @@ export default function PlayPage() {
   const [username, setUsername] = useState("");
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
   const [gameFinished, setGameFinished] = useState(false);
+
+  const [open, setOpen] = useState(false);
 
   // Fetch question on initial load
   useEffect(() => {
@@ -168,7 +171,7 @@ export default function PlayPage() {
     setQuestionsAnswered(0);
     setGameFinished(false);
 
-    fetchQuestion(); // Fetch the first question again
+    fetchQuestion(); 
   };
 
   if (isLoading || (!currentQuestion && !gameFinished)) {
@@ -179,7 +182,18 @@ export default function PlayPage() {
     );
   }
 
+  async function updateScore() {
+    const response = await api.post("/game/score", {
+      score: score,
+    })
+
+    console.log(response);
+  }
+
   if (gameFinished) {
+
+    updateScore();
+
     return (
       <div className="container mx-auto px-4 py-8 max-w-4xl flex flex-col items-center">
         <Confetti />
@@ -215,7 +229,9 @@ export default function PlayPage() {
 
   return (
     <div className="container mx-auto px-3 py-3 sm:px-4 sm:py-8 max-w-4xl relative">
-      {/* 🎉 Confetti on correct answer */}
+
+    {open && <ChallengeModal open={open} setOpen={setOpen} />}
+
       {gameState === "correct" && <Confetti />}
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 sm:mb-8 gap-1 sm:gap-0">
@@ -263,7 +279,6 @@ export default function PlayPage() {
                 ))}
           </div>
 
-          {/* ❌ Incorrect guess animation */}
           {gameState === "incorrect" && (
             <div className="flex flex-col items-center space-y-2 mt-2 sm:mt-3 sm:space-y-3">
               <Frown className="h-8 w-8 sm:h-12 sm:w-12 text-red-500 animate-bounce" />
@@ -280,7 +295,6 @@ export default function PlayPage() {
             </div>
           )}
 
-          {/* 🎉 Correct guess with confetti */}
           {gameState === "correct" && (
             <div className="flex flex-col items-center space-y-2 mt-2 sm:mt-3 sm:space-y-3">
               <ThumbsUp className="h-8 w-8 sm:h-12 sm:w-12 text-green-500 animate-bounce" />
@@ -330,7 +344,18 @@ export default function PlayPage() {
             >
               Next Question
             </Button>
+
           )}
+
+<Button
+              variant="outline"
+              className="w-full mt-1 sm:mt-2 text-xs sm:text-base h-auto py-1.5 sm:py-2 border-purple-500 text-purple-700 hover:bg-purple-50"
+              onClick={() => setOpen(true)}
+            >
+              <Share2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 flex-shrink-0" />
+              Challenge a Friend
+            </Button>
+
         </CardFooter>
       </Card>
       <div className="text-center space-x-1">
@@ -358,7 +383,10 @@ export default function PlayPage() {
         >
           Logout
         </Button>
+
+        
       </div>
     </div>
   );
 }
+

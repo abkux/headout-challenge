@@ -18,10 +18,11 @@ model User {
   invitedBy     String?
   invites       Invite[]
   seenQuestions SeenQuestion[]
+  userScore     UserScore?
 }
 
 model Session {
-  id        String   @id @default(uuid()) 
+  id        String   @id @default(uuid())
   value     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -35,7 +36,7 @@ model Destination {
   options       Json
   funFact       Json
   trivia        Json
-  seenQuestions SeenQuestion[] 
+  seenQuestions SeenQuestion[]
 }
 
 model SeenQuestion {
@@ -49,9 +50,22 @@ model SeenQuestion {
 }
 
 model Invite {
-  id        Int     @id @default(autoincrement())
-  inviterId Int
-  invitee   String
-  score     Int
-  inviter   User    @relation(fields: [inviterId], references: [id])
+  id          Int      @id @default(autoincrement())
+  inviterId   Int
+  invitee     String
+  score       Int
+  inviteLink  String   @unique
+  createdAt   DateTime @default(now())
+
+  inviter     User     @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 }
+
+model UserScore {
+  id       Int    @id @default(autoincrement())
+  userId   Int    @unique
+  username String
+  score    Int    @default(0)
+
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+

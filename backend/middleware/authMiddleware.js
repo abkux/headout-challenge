@@ -13,12 +13,12 @@ const authMiddleware = async (req, res, next) => {
             return res.status(403).json({ error: "Access Denied" });
         }
 
-         // if the token starts with "Bearer ", remove the prefix, in order to verify
+        // if the token starts with "Bearer ", remove the prefix to verify
         if (token.startsWith("Bearer ")) {
             token = token.slice(7, token.length).trimLeft();
         }
 
-        // Verify the token using the secret key from environment variable ( .env )
+        // Verify the token using the secret key from environment variable (.env)
         const verify = jwt.verify(token, process.env.JWT_SECRET);
         req.user = verify;
         
@@ -32,18 +32,18 @@ const authMiddleware = async (req, res, next) => {
         })
 
         // if the session from the header does not match the one in the database, deny access
-        if(session != sessionValue.value) {
+        if (session !== sessionValue.value) {
             return res.status(403).json({ error: "Access Denied, Invalid Session" });
         }
 
-        // if everything is ok process with next route
+        // if everything is ok, proceed with the next route
         next();
         
     } catch (err) {
         console.error(err);
         return res.status(500).json({
             message: "Internal Server Error"
-        })
+        });
     }
 };
 

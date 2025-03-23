@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // ✅ Correct for app directory
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { register } from "@/lib/axios"; // ✅ Correct import
+import { register } from "@/lib/axios"; 
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -24,16 +24,15 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); // ✅ Correct for app directory
+  const router = useRouter(); 
 
-  // ✅ Handle form submission
+
   const handleSubmit = async (e:any) => {
     e.preventDefault();
     setError("");
     setSuccess(false);
     setLoading(true);
 
-    // ✅ Basic validation
     if (!username || !password || !confirmPassword) {
       setError("All fields are required");
       setLoading(false);
@@ -46,14 +45,12 @@ export default function RegisterPage() {
       return;
     }
 
-    // ✅ Call register function
     const success = await register(username, password);
 
     if (success) {
       setSuccess(true);
       setLoading(false);
 
-      // ✅ Redirect after 3 seconds
       setTimeout(() => {
         router.push("/login");
       }, 3000);
@@ -72,7 +69,7 @@ export default function RegisterPage() {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
-            {/* ✅ Show success message if registration is successful */}
+           
             {success && (
               <Alert className="bg-green-100 text-green-700 border border-green-400">
               <AlertDescription>
@@ -80,13 +77,13 @@ export default function RegisterPage() {
               </AlertDescription>
             </Alert>
             )}
-            {/* ✅ Show error message if registration fails */}
+            
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            {/* ✅ Username Input */}
+           
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <Input
@@ -99,7 +96,7 @@ export default function RegisterPage() {
                 disabled={success}
               />
             </div>
-            {/* ✅ Password Input */}
+            
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -112,7 +109,7 @@ export default function RegisterPage() {
                 disabled={success}
               />
             </div>
-            {/* ✅ Confirm Password Input */}
+            
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
@@ -127,11 +124,11 @@ export default function RegisterPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2 py-2">
-            {/* ✅ Submit Button */}
+           
             <Button type="submit" className="w-full" disabled={loading || success}>
               {loading ? "Creating account..." : success ? "Redirecting..." : "Register"}
             </Button>
-            {/* ✅ Link to Login */}
+         
             <p className="text-sm text-center text-gray-500">
               Already have an account?{" "}
               <Link href="/login" className="text-blue-600 hover:underline">
