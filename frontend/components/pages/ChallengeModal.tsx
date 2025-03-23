@@ -105,7 +105,7 @@ const ChallengeModal = ({ open, setOpen }: ChallengeModalProps) => {
     }
   };
 
-  const inviteCode = nanoid(6);
+ 
   async function saveInvite() {
     // try {
     //   const saveInviteResponse = await api.post("/game/invite", {
@@ -122,15 +122,16 @@ const ChallengeModal = ({ open, setOpen }: ChallengeModalProps) => {
 
     try {
      // Check if the inviteLink already exists by making a GET request to the backend
-     const checkInviteResponse = await api.get(`/game/invite-check/${inviteCode}`);
+    //  const checkInviteResponse = await api.get(`/game/invite-check/${inviteCode}`);
     
-     if (checkInviteResponse.data) {
-       // If invite exists, generate a new code and try again
-       console.log("Invite link already exists. Generating a new one.");
-       return saveInvite(); // Retry by generating a new invite code
-     }
+    //  if (checkInviteResponse.data) {
+    //    // If invite exists, generate a new code and try again
+    //    console.log("Invite link already exists. Generating a new one.");
+    //    return saveInvite(); // Retry by generating a new invite code
+    //  }
  
      // If no existing invite, proceed with saving the new invite
+     const inviteCode = nanoid(6);
      const saveInviteResponse = await api.post("/game/invite", {
        inviterId: currentUser.id,
        invitee: username,
