@@ -105,6 +105,7 @@ const ChallengeModal = ({ open, setOpen }: ChallengeModalProps) => {
     }
   };
 
+  
  
   async function saveInvite() {
     // try {
@@ -140,14 +141,22 @@ const ChallengeModal = ({ open, setOpen }: ChallengeModalProps) => {
      });
  
      console.log("Invite saved successfully:", saveInviteResponse.data);
-   } catch (error) {
+     return inviteCode;
+    } catch (error) {
      console.error("Error saving invite:", error);
+     return null;
    }
   }
 
   const shareOnWhatsApp = async () => {
-    await saveInvite();
+    const inviteCode = await saveInvite();
     const inviteText = `Hey! ${currentUser.username} has challenged you to a game! Join now: `;
+    
+    if (!inviteCode) {
+      console.error("Failed to generate invite code.");
+      return; 
+    }
+
     // const inviteLink = `https://headout-challenge.vercel.app/join-challenge/${currentUser.id}/link?code=${encodeURIComponent(
     //   inviteCode
     // )}&username=${encodeURIComponent(username)}&score=${encodeURIComponent(currentUser.score)}`;
