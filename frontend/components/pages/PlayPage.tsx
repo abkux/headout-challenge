@@ -53,7 +53,7 @@ export default function PlayPage() {
     setGameState("loading");
 
     try {
-      const response = await axios.get(`http://localhost:5000/game/up/question`);
+      const response = await axios.get(`http://localhost:5000/api/game/up/question`);
       const data = response.data;
 
       if (!data) {
@@ -227,3 +227,4 @@ export default function PlayPage() {
     </div>
   );
 }
+

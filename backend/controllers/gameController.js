@@ -326,13 +326,12 @@ export const createInvite = async (req, res) => {
 
 // Get invite details
 export const getInvite = async (req, res) => {
-  const { userId, code, username } = req.body;
+  const { code, username } = req.query;
 
   try {
     const fetchInviteData = await prisma.invite.findFirst({
       where: {
         inviteLink: code,
-        inviterId: userId,
         invitee: username,
       },
     });
