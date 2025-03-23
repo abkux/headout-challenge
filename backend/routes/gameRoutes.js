@@ -1,5 +1,5 @@
 import express from 'express';
-import { checkAnswer, score, getQuestion, createInvite, getInvite, updateScore, getQuestion2 } from '../controllers/gameController.js';
+import { checkAnswer, score, getQuestion, createInvite, getInvite, updateScore, getQuestion2, inviteCheckWithId } from '../controllers/gameController.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -167,5 +167,7 @@ router.get('/invite', getInvite);
  *         description: Invalid score or game ID
  */
 router.post('/game/score', updateScore);
+
+router.get('/game/invite-check/:inviteCode', inviteCheckWithId)
 
 export default router;

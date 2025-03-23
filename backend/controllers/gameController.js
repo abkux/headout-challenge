@@ -318,6 +318,32 @@ export const createInvite = async (req, res) => {
   }
 };
 
+// Checking Invite Already Exisit or Not 
+export const inviteCheckWithId = async(req, res) => {
+  const { inviteLink } = req.params;  // Extract the inviteLink from URL parameters
+
+  try {
+    // Query the Prisma database to check if the inviteLink exists
+    const existingInvite = await prismaClient.invite.findUnique({
+      where: {
+        inviteLink: inviteLink, // Check for the inviteLink in the Invite table
+      },
+    });
+
+    if (existingInvite) {
+      // If an invite with the link exists, return it
+      return res.json(existingInvite);
+    } else {
+      // If no invite exists, return a 404 or null
+      return res.json(null);  // Or you can return 404: res.status(404).send('Invite not found');
+    }
+  } catch (error) {
+    // Handle any unexpected errors
+    console.error('Error while checking invite link:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 // Get invite details
 export const getInvite = async (req, res) => {
   const { code, username } = req.query;
