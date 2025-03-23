@@ -30,7 +30,7 @@ const JoinChallenge = () => {
       }
 
       try {
-        const result = await axios.get(`http://localhost:5000/api/game/invite?code=${code}&username=${username}`);
+        const result = await axios.get(`https://headout-challenge.onrender.com/api/game/invite?code=${code}&username=${username}`);
         if (result.data.success) {
           setIsValid(true);
         } else {
