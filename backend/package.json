@@ -2,10 +2,10 @@
   "name": "globetrotter_backend",
   "version": "1.0.0",
   "description": "The backend code for The Globetrotter Challenge – The Ultimate Travel Guessing Game!",
-  "main": "index.js",
+  "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "author": "abkux",
   "license": "ISC",
