@@ -18,7 +18,7 @@ app.use(express.json()); // Parse incoming JSON requests
 app.use(cors()) // Enable CORS for cross-origin requests
 
 app.get('/', async(req, res) => {
-    res.status(200).json({status: OK});
+    res.status(200).json({status: "OK"});
 })
 
 // Routes
